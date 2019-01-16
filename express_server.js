@@ -26,7 +26,7 @@ app.get("/urls/new", (req, res) => {
 //  Above code intentionally placed above the below one
 
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { urls: urlDatabase, shortURL: urlDatabase[req.params.id] };
+  let templateVars = { urls: urlDatabase, longURL:urlDatabase[req.params.id], shortURL: req.params.id};
   res.render("urls_show", templateVars);
 });
 
@@ -42,6 +42,7 @@ app.post("/urls", (req, res) => {
 //   res.send("<html><body>Hello <b>World</b></body></html>\n");
 // });
 
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
@@ -53,9 +54,27 @@ app.get("/u/:shortURL", (req, res) => {
 
 });
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+  let id = req.params.shortURL;
+  delete urlDatabase[id];
+  res.redirect("/urls")
+} )
+
+
+
+
+app.post("/urls/:shortURL/", (req, res) => {
+  let id = req.params.shortURL;
+  urlDatabase[id] = req.body.longURL;
+  res.redirect("/urls/")
+
+})
+
 function generateRandomString() {
     return Math.random().toString(36).substring(6)
 
 
   }
+
+
 
