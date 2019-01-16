@@ -6,6 +6,10 @@ app.set("view engine", "ejs");
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
+var cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
+
 
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -16,7 +20,7 @@ var urlDatabase = {
 
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
-  res.render("urls_index", templateVars);
+  res.render("urls_index", templateVars,);
 });
 
 
@@ -27,7 +31,7 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   let templateVars = { urls: urlDatabase, longURL:urlDatabase[req.params.id], shortURL: req.params.id};
-  res.render("urls_show", templateVars);
+  res.render("urls_show", templateVars, username = req.cookies["username"]);
 });
 
 
@@ -69,6 +73,18 @@ app.post("/urls/:shortURL/", (req, res) => {
   res.redirect("/urls/")
 
 })
+
+app.post("/login", (req, res) => {
+  let username = req.body.username
+  // console.log(username)
+  res.cookie("username", username);
+  res.redirect("/urls")
+})
+
+
+
+
+
 
 function generateRandomString() {
     return Math.random().toString(36).substring(6)
