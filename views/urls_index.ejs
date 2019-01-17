@@ -13,8 +13,11 @@
     <ul>
       <% for (var short_URL in urls) {%>
       <li> <%= short_URL%></li>
-     <form method="POST" action="/urls/<%= short_URL%>/delete">
-      <input type = "submit" value = "Delete"></form><% };%>
+      <form method="POST" action="/urls/<%= short_URL%>/delete">
+        <input type = "submit" value = "Delete">
+      </form><%
+      } %>
+    </ul>
 
 
 
