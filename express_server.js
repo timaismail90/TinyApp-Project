@@ -14,12 +14,31 @@ app.use(cookieParser());
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
-
-
 };
 
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  },
+  "user3RandomID":{
+    id: "user3RandomID",
+    email: "user3@example.com",
+    password: "password3",
+
+  }
+
+}
+
+
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, username:req.cookies["username"] };
+  let templateVars = { urls: urlDatabase, userId: req.cookies.userId};
   res.render("urls_index", templateVars);
 });
 
@@ -61,8 +80,8 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   let id = req.params.shortURL;
   delete urlDatabase[id];
-  res.redirect("/urls")
-} )
+  res.redirect("/urls");
+});
 
 
 
@@ -72,20 +91,72 @@ app.post("/urls/:shortURL/", (req, res) => {
   urlDatabase[id] = req.body.longURL;
   res.redirect("/urls/")
 
-})
+});
 
-app.post("/login", (req, res) => {
-  let username = req.body.username
+
+
+  // let username = req.body.username
   // console.log(username)
-  res.cookie("username", username);
-  res.redirect("/urls")
-})
+  // res.cookie("username", username); commented code from yesterday
+  // res.redirect("/urls")
 
 
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('userId');
   res.status(302).redirect('/urls');
+});
+
+
+
+app.get('/register', (req, res) => {
+  res.render("registration")
+
+});
+
+app.post('/register', (req, res) => {
+  let name = req.body.Name;
+  let email = req.body.email;
+  let password = req.body.password;
+  let randomId = generateRandomString();
+  if (!email || password ==="") {
+      console.log('form incomplete')
+      res.status(400).send("Fill in the Form");
+    }
+  for(key in users)
+    if(email===users[key].email)
+        res.status(400).send("email already exists")
+
+      console.log('looks good');
+            users[randomId] = {
+              email: email,
+              password: password,
+              id : randomId,
+            }
+            res.cookie["userId"] = randomId;
+            res.redirect('/urls');
+
+
+
+      });
+
+
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+app.post("/login", (req, res) => {
+  let name = req.body.email;
+  let email = req.body.email;
+  let password = req.body.password;
+  for (key in users){
+    if(email === users[key].email && password === users[key].password) {
+      res.cookie('userId', key);
+      res.redirect("/urls");
+    };
+  } if (email != users[key].email && password !== users[key].password) {
+    return res.status(403).send("incorrect email or password")
+  };
 });
 
 
@@ -95,13 +166,9 @@ app.post('/logout', (req, res) => {
 
 
 
-
-
-function generateRandomString() {
+  function generateRandomString() {
     return Math.random().toString(36).substring(6)
 
 
   }
-
-
 
