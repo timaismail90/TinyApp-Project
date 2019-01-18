@@ -1,22 +1,26 @@
 <h1>Header</h1>
 
-<% if(username) {%>
+
+<!-- <form> -->
+
+<!-- <li><a href="/register">/register</a>
+<a href="/login">login</a></li> -->
+
+
+<!-- </li> -->
+<% if(userId) {%>
 
 <form method= "POST" action = "/logOut">
     <button type="submit" logout = "logOut">Logout</button>
-</form>
+<!-- </form> -->
 
 <%} else { %>
 <form method= "POST" action="/login/">
-  username: <input type="text" name = "username">
-   <input type="submit" value="Submit form">
+  <!-- userId: <input type="Submit" value = "login"> -->
+   <input type="submit" value="login">
+   <a href="/register">/register</a>
+
  </form>
-
-
-
-
-
-
 
 
 
