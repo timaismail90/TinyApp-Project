@@ -38,13 +38,13 @@ const users = {
 
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, userId: req.cookies.userId};
+  let templateVars = { urls: urlDatabase, user: req.cookies.userId};
   res.render("urls_index", templateVars);
 });
 
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  res.render("urls_new", { user: users});
 });
 //  Above code intentionally placed above the below one
 

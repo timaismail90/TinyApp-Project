@@ -8,7 +8,7 @@
 
 
 <!-- </li> -->
-<% if(userId) {%>
+<% if(user) {%>
 
 <form method= "POST" action = "/logOut">
     <button type="submit" logout = "logOut">Logout</button>
@@ -16,8 +16,8 @@
 
 <%} else { %>
 <form method= "POST" action="/login/">
-  <!-- userId: <input type="Submit" value = "login"> -->
-   <input type="submit" value="login">
+  <!-- userId: --> <input type="Submit" value = "submit form">
+   <!-- <input type="submit" value="login"> -->
    <a href="/register">/register</a>
 
  </form>
