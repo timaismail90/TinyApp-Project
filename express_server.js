@@ -13,8 +13,11 @@ app.use(cookieParser());
 
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "9sm5xK": "http://www.google.com",
+  "userID" : "userRandomID"
 };
+ console.log(urlDatabase);
+
 
 const users = {
   "userRandomID": {
@@ -44,7 +47,12 @@ app.get("/urls", (req, res) => {
 
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new", { user: users});
+  if(req.cookies.userId){
+    res.render("urls_new", { user: users});
+  }else{
+     res.redirect("/login");
+
+  }
 });
 //  Above code intentionally placed above the below one
 
@@ -119,26 +127,29 @@ app.post('/register', (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   let randomId = generateRandomString();
+
   if (!email || password ==="") {
-      console.log('form incomplete')
-      res.status(400).send("Fill in the Form");
+    console.log('form incomplete')
+    res.status(400).send("Fill in the Form");
+  }
+
+  for(key in users) {
+    if(email === users[key].email) {
+      res.status(400).send("email already exists")
     }
-  for(key in users)
-    if(email===users[key].email)
-        res.status(400).send("email already exists")
 
-      console.log('looks good');
-            users[randomId] = {
-              email: email,
-              password: password,
-              id : randomId,
-            }
-            res.cookie["userId"] = randomId;
-            res.redirect('/urls');
-
-
-
-      });
+    console.log('looks good');
+    users[randomId] = {
+      email: email,
+      password: password,
+      id : randomId,
+    }
+l
+    res.cookie["userId"] = randomId;
+    urlDatabase['userId'] ={};
+    res.redirect('/urls');
+  }
+});
 
 
 app.get("/login", (req, res) => {
@@ -171,4 +182,3 @@ app.post("/login", (req, res) => {
 
 
   }
-
