@@ -1,26 +1,24 @@
 
-<% include ./partials/_header.ejs %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <title>TinyApp</title>
 </head>
-<hader>
-</hader>
+
 
 <body>
-
+<% include ./partials/_header.ejs %>
     <ul>
-      <% for (var short_URL in urls) {%>
+      <% for (var short_URL in user) {%>
       <li> <%= short_URL%></li>
-      <li> <%= urls[short_URL].longURL %></li>
+      <li> <%= user[short_URL].longURL %></li>
       <form method="POST" action="/urls/<%= short_URL%>/delete">
         <input type = "submit" value = "Delete">
-      </form><%
-      } %>
+      </form>
+      <% } %>
     </ul>
 
- <a href="urls/new">Create new short url</a>
+ <a href="/urls/new">Create new short url</a>
 
 </body>
 </html>

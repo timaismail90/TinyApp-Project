@@ -1,27 +1,9 @@
 <h1>TinyApp</h1>
 
-
-<!-- <form> -->
-
-<!-- <li><a href="/register">/register</a>
-<a href="/login">login</a></li> -->
-
-
-<!-- </li> -->
 <% if(user) {%>
 
 <form method= "POST" action = "/logOut">
     <button type="submit" logout = "logOut">Logout</button>
-<!-- </form> -->
-
-<%} else { %>
-<form method= "POST" action="/login/">
-  <!-- userId: --> <input type="Submit" value = "submit form">
-   <!-- <input type="submit" value="login"> -->
-   <a href="/register">/register</a>
-
- </form>
-
-
-
 <% } %>
+ <a href="/register">Register</a>
+<a href="/login">Login</a>

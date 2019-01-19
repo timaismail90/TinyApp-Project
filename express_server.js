@@ -2,13 +2,21 @@ var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
+var cookieSession = require('cookie-session');
+
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ['vV4AgRVL4kzHs1JL'],
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
 
 const bcrypt = require('bcrypt');
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-var cookieParser = require("cookie-parser");
-app.use(cookieParser());
+
 
 
 // var urlDatabase = {
@@ -49,18 +57,22 @@ const users = {
 
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, user: req.cookies.userId};
+  let templateVars = { urls: urlDatabase, user:users[req.session.userId]};
   res.render("urls_index", templateVars);
 });
 
 
 app.get("/urls/new", (req, res) => {
-  if(req.cookies.userId){
-    res.render("urls_new", { user: users});
-  }else{
-     res.redirect("/login");
 
+  let templateVars = { urls: urlDatabase, user:users[req.session.userId]};
+
+  if(!req.session.userId){
+     res.render("urls_new", templateVars);
   }
+  // // else{
+  //   res.render("urls_new");
+
+  // }
 });
 //  Above code intentionally placed above the below one
 
@@ -68,17 +80,20 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = { urls: urlDatabase, longURL:urlDatabase[req.params.id], shortURL: req.params.id};
   res.render("urls_show", templateVars,);
 });
-// app.post("urls/:id", (req, res)=>{
-//   let longURL = req.params.longURL;
-//   for(shortURL in urlDatabase) {
-//     longURL = urlDatabase[shortURL].longURL;
 
-//   }res.redirect("/urls")
-// })
+app.post("urls/:id", (req, res)=>{
+  var shortURL = req.params.id
+  let templateVars = { urls: urlDatabase, user:users[req.session.userId]};
+  let longURL = req.body.longURL;
+  for(shortURL in urlDatabase) {
+    longURL = urlDatabase[shortURL].longURL;
+
+  }res.redirect("/urls", templateVars)
+})
 
 app.post("/urls", (req, res) => {
   var shortURL = generateRandomString()
-  urlDatabase[shortURL].longURL = {
+  urlDatabase[shortURL] = {
     longURL : req.body.longURL
   }
   res.redirect(`/urls/${shortURL}`)       // Respond with 'Ok' (we will replace this)
@@ -103,7 +118,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   let id = req.params.shortURL;
-  let userId = req.cookie.userId;
+  let userId = req.session.userId;
 
   for(shortURL in urlDatabase) {
 
@@ -147,7 +162,7 @@ app.post("/urls/:shortURL/", (req, res) => {
 
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('userId');
+  req.session.userId = null
   res.status(302).redirect('/urls');
 });
 
@@ -182,7 +197,7 @@ app.post('/register', (req, res) => {
       id : randomId
     }
 
-    res.cookie["userId"] = randomId;
+    req.session.userId = randomId;
     // urlDatabase[userID] ={};
     res.redirect('/urls');
   }
@@ -199,12 +214,13 @@ app.post("/login", (req, res) => {
   let password = req.body.password;
   for (key in users){
     if(email === users[key].email && bcrypt.compareSync(password, users[key].password)){
-      res.cookie('userId', key);
+      // res.cookie('userId', key);
       res.redirect("/urls");
-    };
-  } if (email != users[key].email && bcrypt.compareSync(password, users[key].password)) {
+    } else  if (email !== users[key].email && bcrypt.compareSync(password, users[key].password)) {
     return res.status(403).send("incorrect email or password")
-  };
+  }
+}
+
 });
 
 
@@ -221,15 +237,18 @@ app.post("/login", (req, res) => {
   }
 
 function urlsForUser(id){
+  var userDatabase =[]
   for(key in urlDatabase){
-    if(generateRandomString === urlDatabase[key][userID]){
-      return urlDatabase.urls;
+    if(urlDatabase[key][id]=== urlDatabase[key][userID]){
+        userDatabase.push(key);
     }
   }
-
+  return userDatabase;
 }
 
 // for(key in users) {
 //     if(email === users[key].email) {
 //       res.status(400).send("email already exists")
 //     }
+
+// var userData = urlsForUser(generateRandomString)
