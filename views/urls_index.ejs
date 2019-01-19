@@ -13,13 +13,14 @@
     <ul>
       <% for (var short_URL in urls) {%>
       <li> <%= short_URL%></li>
+      <li> <%= urls[short_URL].longURL %></li>
       <form method="POST" action="/urls/<%= short_URL%>/delete">
         <input type = "submit" value = "Delete">
       </form><%
       } %>
     </ul>
 
-
+ <a href="urls/new">Create new short url</a>
 
 </body>
 </html>

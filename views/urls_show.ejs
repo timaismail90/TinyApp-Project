@@ -10,7 +10,7 @@
   <h1>  shortURL: <%=shortURL%>
    <ul>
 
-        <li> <%= urls[shortURL]%></li>%>
+        <li> <%= urls[shortURL].longURL%></li>%>
         <form method="POST" action="/urls/<%= shortURL%>/">
       <input type = "submit" value = "Update">
       <input type="text"></form>
@@ -20,5 +20,3 @@
 
     <!-- Add your EJS code here -->
 </body>
-
-<shortURL
