@@ -57,6 +57,7 @@ const users = {
 
 
 app.get("/urls", (req, res) => {
+  console.log("/urls",users[req.session.userId], req.session.userId, users)
   let templateVars = { urls: urlDatabase, user:users[req.session.userId]};
   res.render("urls_index", templateVars);
 });
@@ -214,7 +215,7 @@ app.post("/login", (req, res) => {
   let password = req.body.password;
   for (key in users){
     if(email === users[key].email && bcrypt.compareSync(password, users[key].password)){
-      // res.cookie('userId', key);
+      req.session.userId = key;
       res.redirect("/urls");
     } else  if (email !== users[key].email && bcrypt.compareSync(password, users[key].password)) {
     return res.status(403).send("incorrect email or password")
@@ -222,8 +223,6 @@ app.post("/login", (req, res) => {
 }
 
 });
-
-
 
 
 
@@ -238,9 +237,12 @@ app.post("/login", (req, res) => {
 
 function urlsForUser(id){
   var userDatabase =[]
-  for(key in urlDatabase){
-    if(urlDatabase[key][id]=== urlDatabase[key][userID]){
-        userDatabase.push(key);
+  for(shortkey in urlDatabase){
+    if(userId === urlDatabase[shortkey].userId){
+      let data = urlDatabase[shortkey];
+      data['shortURL'] = shortkey
+      userDatabase.push(data);
+      console.log(userDatabase)
     }
   }
   return userDatabase;
@@ -252,3 +254,18 @@ function urlsForUser(id){
 //     }
 
 // var userData = urlsForUser(generateRandomString)
+
+
+
+// function findURLS(userId) {
+//  var filterDatabase = []
+//  for (var shortkey in urlDataBase) {                               //itterating through each object (2)
+//    if(userId === urlDataBase[shortkey].userId) {
+//      let data = urlDataBase[shortkey];                      //var data is the object containing longurl and userid
+//      data['shortURL']= shortkey                      // add the key shorturl to data and = the (keys) we iterate through
+//      filterDatabase.push(data)                                   //make this an array caled filterdatabase
+//      console.log(filterDatabase)
+//    }
+//  }
+//  return filterDatabase;
+// }
