@@ -1,9 +1,8 @@
 <h1>TinyApp</h1>
-
 <% if(user) {%>
-
-<form method= "POST" action = "/logOut">
-    <button type="submit" logout = "logOut">Logout</button>
-<% } %>
- <a href="/register">Register</a>
-<a href="/login">Login</a>
+<form method="POST" action="/logOut">
+    <button type="submit" logout="logOut">Logout</button>
+    <% } else {} %>
+    <a href="/register">Register</a>
+    <a href="/login">Login</a>
+    <% } %>

@@ -8,15 +8,18 @@
 
 <body>
 <% include ./partials/_header.ejs %>
-    <ul>
-      <% for (var short_URL in user) {%>
-      <li> <%= short_URL%></li>
-      <li> <%= user[short_URL].longURL %></li>
-      <form method="POST" action="/urls/<%= short_URL%>/delete">
-        <input type = "submit" value = "Delete">
-      </form>
-      <% } %>
-    </ul>
+<ul>
+    <% for (var short_URL in urlDatabase) {%>
+    <li>
+        <%= short_URL%>
+    </li>
+    <li>
+        <%= user[short_URL].longURL %>
+    </li>
+    <form method="POST" action="/urls/<%= short_URL%>/delete">
+        <input type="submit" value="Delete">
+    </form>
+    <% } %> </ul>
 
  <a href="/urls/new">Create new short url</a>
 
