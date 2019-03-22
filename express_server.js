@@ -34,7 +34,7 @@ var urlDatabase = {
 };
 // console.log(urlDatabase);
 
-// user Dabase found below:
+// user Database found below:
 
 
 const users = {
@@ -95,15 +95,15 @@ app.get("/urls", (req, res) => {
 
     if (!req.session.userId) {
         res.redirect("/login")
-        return 
-    }
+    } else {
+        
     let userData = urlsForUser(req.session.userId)
     let templateVars = {
         userDatabase: userData,
         user: users[req.session.userId]
     };
-    // console.log(users);
     res.render("urls_index", templateVars);
+}
 });
 
 
@@ -157,7 +157,7 @@ app.get("/urls/:id", (req, res) => {
         user: users[req.params.userId]
     };
     var shortURL = req.params.id;
-    if (!urlDatabase[shorturl]) {
+    if (!urlDatabase[shortURL]) {
         res.send("URL not Found")
     } else if (req.session.userId === urlDatabase[shortURL].userID) {
         res.render("urls_show", templateVars);
@@ -180,14 +180,18 @@ app.post("/urls/:shorturl/update", (req, res) => {
 //POST("/urls/;/Delete")
 
 app.post("/urls/:shorturl/delete", (req, res) => {
-    var shortURL = req.params.id;
+    var shortURL = req.params.shorturl;
+    console.log(shortURL)
     if (req.session.userId === urlDatabase[shortURL].userID) {
         delete urlDatabase[shortURL];
         res.redirect("/urls")
     } else {
-        res.send("Access Denied");
+        res.redirect('/login')
+        // res.send("Access Denied");
     }
 });
+
+
 
 
 app.post("urls/:id", (req, res) => {
@@ -238,10 +242,11 @@ app.post('/logout', (req, res) => {
 
 
 app.get('/register', (req, res) => {
+    console.log(req.session.userId)
     if (!req.session.userId) {
         res.render("registration");
     } else {
-        res.redirect("/url")
+        res.redirect("/urls")
     }
 
 });
