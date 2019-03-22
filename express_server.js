@@ -63,11 +63,11 @@ const users = {
 function urlsForUser(id) {
     var userDatabase = []
     for (shortkey in urlDatabase) {
-        if (userId === urlDatabase[shortkey].userId) {
+        if (id === urlDatabase[shortkey].userID) {
             let data = urlDatabase[shortkey];
             data['shortURL'] = shortkey
             userDatabase.push(data);
-            // console.log(userDatabase)
+            console.log(userDatabase)
         }
     }
     return userDatabase;
@@ -88,6 +88,7 @@ app.get("/", (req, res) => {
 
 // GET ("/urls")
 app.get("/urls", (req, res) => {
+    console.log(req.session.userId)
     if (!req.session.userId) {
         res.redirect("/login")
     }
@@ -210,12 +211,22 @@ app.post("/login", (req, res) => {
     let name = req.body.name;
     let email = req.body.email;
     let password = req.body.password;
-    for (userId in users) {
-        if (email === users[userId].email && bcrypt.compareSync(password, users[userId].password)) {
-            req.session.userId = userId;
-            res.redirect("/urls");
-        } else if (email !== users[userId].email && bcrypt.compareSync(password, users[userId].password)) {
-            return res.status(403).send("incorrect email or password")
+    function checkUser (email, password){
+       for ( var userID in users){
+        if (email === users[userID].email && bcrypt.compareSync(password, users[userID].password)) {
+            return users[userID]
+       }
+        return null
+    }
+    
+    let existingUser = checkUser(email, password)
+    if (existingUser){
+         
+        req.session.userId = userId;
+        console.log(req.session.userId)
+        res.redirect("/urls");
+    } else {
+         res.status(403).send("incorrect email or password")
         }
     }
 
@@ -267,7 +278,7 @@ app.post('/register', (req, res) => {
             id: randomId
         }
 
-        // req.session.userId = randomId;
+       console.log(users, "checking database")
 
         res.redirect('/urls');
     }
