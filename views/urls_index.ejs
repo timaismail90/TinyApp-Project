@@ -7,14 +7,16 @@
 
 
 <body>
-<% include ./partials/_header.ejs %>
+        <% include ./partials/_header.ejs %>
+   <%= JSON.stringify(userDatabase) %>
+
 <ul>
     <% for (var short_URL in userDatabase) {%>
     <li>
         <%= short_URL%>
     </li>
     <li>
-        <%= user[short_URL].longURL %>
+        <%= userDatabase[short_URL]%>
     </li>
     <form method="POST" action="/urls/<%= short_URL%>/delete">
         <input type="submit" value="Delete">

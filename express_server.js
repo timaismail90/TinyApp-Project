@@ -61,19 +61,23 @@ const users = {
 // function that finds urls for a given user:
 
 function urlsForUser(id) {
-    var userDatabase = []
+    var userDatabase = {}
     for (shortkey in urlDatabase) {
         if (id === urlDatabase[shortkey].userID) {
-            let data = urlDatabase[shortkey];
-            data['shortURL'] = shortkey
-            userDatabase.push(data);
-            console.log(userDatabase)
+            userDatabase[shortkey] = urlDatabase[shortkey].longURL
         }
     }
     return userDatabase;
 }
-
-
+function checkUser (email, password){
+    for ( var userID in users){
+        console.log(users[userID], "checking")
+     if (email === users[userID].email && bcrypt.compareSync(password, users[userID].password)) {
+        return users[userID] 
+    }  
+ }
+ return null
+}
 // Function that generates a random id:
 
 function generateRandomString() {
@@ -88,9 +92,10 @@ app.get("/", (req, res) => {
 
 // GET ("/urls")
 app.get("/urls", (req, res) => {
-    console.log(req.session.userId)
+
     if (!req.session.userId) {
         res.redirect("/login")
+        return 
     }
     let userData = urlsForUser(req.session.userId)
     let templateVars = {
@@ -109,7 +114,7 @@ app.get("/urls/new", (req, res) => {
 
     let templateVars = { user: users[req.session.userId] };
 
-    if (!req.session.userId) { // user is not registered
+    if (!req.session.userId) { // user is not logged in 
         res.redirect("/login");
     } else {
         res.render("urls_new", templateVars);
@@ -208,27 +213,16 @@ app.get("/login", (req, res) => {
 //POST/lOGIN
 
 app.post("/login", (req, res) => {
-    let name = req.body.name;
     let email = req.body.email;
-    let password = req.body.password;
-    function checkUser (email, password){
-       for ( var userID in users){
-        if (email === users[userID].email && bcrypt.compareSync(password, users[userID].password)) {
-            return users[userID]
-       }
-        return null
-    }
-    
+    let password = req.body.password;  
     let existingUser = checkUser(email, password)
-    if (existingUser){
-         
-        req.session.userId = userId;
-        console.log(req.session.userId)
+        console.log(existingUser, email,password)
+    if (existingUser){ 
+        req.session.userId = existingUser.id;
         res.redirect("/urls");
     } else {
          res.status(403).send("incorrect email or password")
         }
-    }
 
 });
 
@@ -246,6 +240,8 @@ app.post('/logout', (req, res) => {
 app.get('/register', (req, res) => {
     if (!req.session.userId) {
         res.render("registration");
+    } else {
+        res.redirect("/url")
     }
 
 });
@@ -261,33 +257,26 @@ app.post('/register', (req, res) => {
     let hashedPassword = bcrypt.hashSync(password, 10);
     let randomId = generateRandomString();
 
-    if (!email || password === "") {
-        console.log('form incomplete')
+    if (!email || !password) {
         res.status(400).send("Fill in the Form");
-    }
+    }else if (checkUser(email, password)) {
+        res.status(400).send("email already exists")
+    }else{
+        
 
-    for (key in users) {
-        if (email === users[key].email) {
-            res.status(400).send("email already exists")
-        }
-
-        console.log('looks good');
         users[randomId] = {
             email: email,
             password: hashedPassword,
             id: randomId
         }
-
-       console.log(users, "checking database")
-
+        console.log(users, randomId, "checking register")
+    
         res.redirect('/urls');
     }
+    
 });
 
 
-// app.get("/hello", (req, res) => {
-//   res.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
 
 
 app.listen(PORT, () => {
@@ -297,25 +286,3 @@ app.listen(PORT, () => {
 
 
 
-
-
-
-
-
-
-// var userData = urlsForUser(generateRandomString)
-
-
-
-// function findURLS(userId) {
-//  var filterDatabase = []
-//  for (var shortkey in urlDataBase) {                               //itterating through each object (2)
-//    if(userId === urlDataBase[shortkey].userId) {
-//      let data = urlDataBase[shortkey];                      //var data is the object containing longurl and userid
-//      data['shortURL']= shortkey                      // add the key shorturl to data and = the (keys) we iterate through
-//      filterDatabase.push(data)                                   //make this an array caled filterdatabase
-//      console.log(filterDatabase)
-//    }
-//  }
-//  return filterDatabase;
-// }
