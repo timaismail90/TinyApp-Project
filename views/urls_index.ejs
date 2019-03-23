@@ -18,9 +18,11 @@
     <li>
         <%= userDatabase[short_URL]%>
     </li>
-    <form method="POST" action="/urls/<% short_URL%>/delete">
+    <form method="POST" action="/urls/<%=short_URL%>/delete">
         <input type="submit" value="Delete">
     </form>
+    <a href="/urls/<%=short_URL%>">edit</a>
+
     <% } %> </ul>
 
  <a href="/urls/new">Create new short url</a>

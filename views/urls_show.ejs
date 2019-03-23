@@ -11,9 +11,10 @@
    <ul>
 
         <li> <%= urls[shortURL].longURL%></li>%>
-        <form method="POST" action="/urls/<%= shortURL%>/">
-      <input type = "submit" value = "Update">
-      <input type="text"></form>
+        <form method="POST" action="/urls/<%= shortURL%>/update">
+      <input type = "submit"  value = "update">
+      <input type="text"name=longURL>
+    </form>
    </ul>
 
 

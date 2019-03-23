@@ -172,8 +172,13 @@ app.get("/urls/:id", (req, res) => {
 
 app.post("/urls/:shorturl/update", (req, res) => {
     const { shorturl } = req.params;
-    urlDatabase[shorturl] = req.body.longurl;
-    res.redirect("/urls");
+    if(users[req.session.userId]){
+        urlDatabase[shorturl].longURL = req.body.longURL;
+        res.redirect("/urls");
+    } else {
+        res.status(403).send()
+
+    }
 });
 
 
