@@ -18,14 +18,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-
-// var urlDatabase = {
-//   "b2xVn2": {
-//     "userId": "<<someUserId>>",
-//     "longURL": "http://www.google.com"
-//   }
-// }
-
 var urlDatabase = {
     "b2xVn2": {
         "longURL": "http://www.lighthouselabs.ca",
@@ -69,6 +61,9 @@ function urlsForUser(id) {
     }
     return userDatabase;
 }
+
+//function that checks a user
+
 function checkUser (email, password){
     for ( var userID in users){
         console.log(users[userID], "checking")
@@ -78,6 +73,7 @@ function checkUser (email, password){
  }
  return null
 }
+
 // Function that generates a random id:
 
 function generateRandomString() {
