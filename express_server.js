@@ -119,10 +119,11 @@ app.get("/urls/new", (req, res) => {
 
 
 app.post("/urls", (req, res) => {
+    var longURL = req.body.longURL
     var userId = req.session.userId;
     var shortURL = generateRandomString();
     urlDatabase[shortURL] = {
-        longURL: req.body.longURL,
+        longURL: `http://${longURL}`,
         userID: userId,
     }
     res.redirect(`/urls/${shortURL}`) // Respond with 'Ok' (we will replace this)
@@ -132,7 +133,7 @@ app.post("/urls", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
     let shortURL = req.params.shortURL;
-    if (!urlDatabase[shorturl]) {
+    if (!urlDatabase[shortURL]) {
         res.send("URL not Found")
     }
     let longURL = urlDatabase[shortURL].longURL;
